@@ -1,0 +1,166 @@
+<!DOCTHML>
+<html>
+    <head>
+        <title>this is svg demo</title>
+        <script src="d3.min.js" charset="utf-8"></script>         
+    </head>
+
+    <body>
+        <p>我是杜杰！</p>
+        <p>你是晓翠吗？</p>
+        <svg xmls="http://www.w3.org/2000/svg" version="1.1" height="250" width="500">
+            
+            <circle cx="100" cy="50" r="40" stroke="black" stroke-width="2" fill="red"/> 
+            <rect x="100" y="100" width="150" height="200" style="fill:rgb(0,0,255);stroke-width:1;stroke:rgb(0,0,0);opacity:0.5"/>
+            <line x1="0" y1="0" x2="200" y2="200" style="stroke:rgb(255,0,0);stroke-width:2"/>
+            <polygon points="200,10 250,190 160,210" style="fill:lime;stroke:purple;stroke-width:1"/>
+            <polyline points="20,20 40,25 60,40 80,120 120,140 200,180" style="fill:none;stroke:black;stroke-width:3" />
+            <text x="200" y="15" fill="red">I love SVG</text>
+        </svg>        
+        <div></div>
+        <button onclick="mysort()">排序</button>
+        <button onclick="myadd()">添加</button>
+    </body>
+    <script>
+        //javascript放在head中不起作用的原因是：文档还没有加载就执行了javascript，所以建议放在后边
+        //原生的javascript函数修改p的内容
+        var paragraphs = document.getElementsByTagName("p");
+        for(var i=0; i<paragraphs.length;i++)
+        {
+            var paragraph = paragraphs.item(i);
+            paragraph.innerHTML = "I am dj!";
+        }
+
+        //使用d3来修改p的内容,并设置样式
+        var p = d3.select("body")
+        .selectAll("p")
+        .text("Hello World!");
+        p.style("color", "red");
+        p.style("font-size", "22px");
+
+        //创建柱状图
+        var dataset = [50, 43, 120, 87, 99, 167, 142];
+        var width = 400;
+        var height = 400;
+        var svg = d3.select("div")
+                    .append("svg")
+                    .attr("width", width)
+                    .attr("height", height);
+        var padding = { top: 20, right: 20, bottom: 20, left: 20 };
+        var rectStep = 35;
+        var rectWidth = 30;
+        var rect = svg.selectAll("rect")
+                    .data(dataset)
+                    .enter()
+                    .append("rect")
+                    .attr("fill", "steelblue")
+                    .attr("x", function(d, i){  //d代表datum
+                        return padding.left + i*rectStep;
+                    })  
+                    .attr("y", function(d){
+                         return width-padding.bottom-d;
+                    })
+                    .attr("width", rectWidth)
+                    .attr("height", function(d){
+                        return d;
+                    });
+                    
+        var text = svg.selectAll("text")
+                    .data(dataset)
+                    .enter()
+                    .append("text")
+                    .attr("fill", "white")
+                    .attr("font-size", "14px")
+                    .attr("text-anchor", "middle")
+                     .attr("x", function(d, i){  //d代表datum
+                        return padding.left + i*rectStep;
+                    })  
+                    .attr("y", function(d){
+                         return width-padding.bottom-d;
+                    })
+                    .attr("dx", rectWidth/2)
+                    .attr("dy", "1em")
+                    .text(function(d){
+                        return d;
+                    });
+
+        function draw(){
+            var updateRect = svg.selectAll("rect")
+                                .data(dataset);
+            var enterRect = updateRect.enter();
+            var exitRect = updateRect.exit();
+            updateRect.attr("fill", "steelblue")
+                    .attr("x", function(d, i){  //d代表datum
+                        return padding.left + i*rectStep;
+                    })  
+                    .attr("y", function(d){
+                         return width-padding.bottom-d;
+                    })
+                    .attr("width", rectWidth)
+                    .attr("height", function(d){
+                        return d;
+                    });
+
+            enterRect.append("rect")
+                    .attr("fill", "steelblue")
+                    .attr("x", function(d, i){  //d代表datum
+                        return padding.left + i*rectStep;
+                    })  
+                    .attr("y", function(d){
+                         return width-padding.bottom-d;
+                    })
+                    .attr("width", rectWidth)
+                    .attr("height", function(d){
+                        return d;
+                    });
+
+            exitRect.remove();
+
+
+            var updateText = svg.selectAll("text")
+                                .data(dataset);
+            var enterText = updateText.enter();
+            var exitText = updateText.exit();
+            updateText.attr("fill", "white")
+                    .attr("font-size", "14px")
+                    .attr("text-anchor", "middle")
+                     .attr("x", function(d, i){  //d代表datum
+                        return padding.left + i*rectStep;
+                    })  
+                    .attr("y", function(d){
+                         return width-padding.bottom-d;
+                    })
+                    .attr("dx", rectWidth/2)
+                    .attr("dy", "1em")
+                    .text(function(d){
+                        return d;
+                    });
+            enterText.append("text")
+                    .attr("fill", "white")
+                    .attr("font-size", "14px")
+                    .attr("text-anchor", "middle")
+                     .attr("x", function(d, i){  //d代表datum
+                        return padding.left + i*rectStep;
+                    })  
+                    .attr("y", function(d){
+                         return width-padding.bottom-d;
+                    })
+                    .attr("dx", rectWidth/2)
+                    .attr("dy", "1em")
+                    .text(function(d){
+                        return d;
+                    });
+            exitText.remove();
+        }
+
+        function mysort(){
+            dataset.sort(d3.ascending);
+            draw();
+        }
+
+        function myadd(){
+            dataset.push(Math.floor(Math.random() * 100));
+            draw();
+        }
+    </script>
+</html>
